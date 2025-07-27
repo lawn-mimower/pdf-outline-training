@@ -99,8 +99,8 @@ def amend_labeled_data(pdf_path, labeled_json_path, output_json_path):
 # --- HOW TO USE ---
 if __name__ == "__main__":
     # 1. Define the paths for ONE pdf and its corresponding json
-    PDF_PATH = "Set9_feature_ESP.pdf"
-    LABELED_JSON_PATH = "Set9_target_ESP.json"
+    PDF_PATH = "./AIH_model/AIH_preprocessor/source_pdfs/Set13_feature.pdf"
+    LABELED_JSON_PATH = "./AIH_model/AIH_data/Set13_target.json"
     
     # 2. Define where to save the output
     OUTPUT_DIR = "labeled_data_complete"
