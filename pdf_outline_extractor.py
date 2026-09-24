@@ -169,7 +169,8 @@ class PDFOutlineExtractor:
             else:
                 merged.append(cur)
 
-        # Enrich features
+        # Enrich features (into a new list so merged[i-1] stays a dict)
+        blocks: List[SpanBlock] = []
         if merged:
             base_font = self._base_font_size(merged)
             for i, m in enumerate(merged):
@@ -198,8 +199,8 @@ class PDFOutlineExtractor:
                     starts_with_digit=int(bool(m["text"]) and m["text"][0].isdigit()),
                     is_titlecase=int(m["text"].istitle())
                 )
-                merged[i] = block
-        return merged  # type: ignore
+                blocks.append(block)
+        return blocks
 
     @staticmethod
     def _base_font_size(blocks: List[Dict[str, Any]]) -> float:
