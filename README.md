@@ -203,4 +203,4 @@ The heuristics-only Docker image was built and run with `--network none` on samp
 | `pdf_outline_extractor.py`, `Dockerfile`, `requirements.txt` | Standalone extractor |
 | `requirements-train.txt`, `pytest.ini`, `tests/` | Training dependencies and tests |
 
-Licence: not yet specified.
+Licence: MIT — see [LICENSE](LICENSE).
