@@ -21,3 +21,6 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 .venv/
+
+# Executed notebooks from nbconvert --output-dir runs
+runs/
