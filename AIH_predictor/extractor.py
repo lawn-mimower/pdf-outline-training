@@ -128,7 +128,8 @@ class PDFProcessor:
 if __name__ == "__main__":
     # Path to a new, unseen PDF you want to process
     # Make sure you have a PDF here to test the script
-    NEW_PDF_PATH = "test_sample.pdf" # Replace with your test PDF
+    import sys
+    NEW_PDF_PATH = sys.argv[1] if len(sys.argv) > 1 else "test_sample.pdf"
 
     processor = PDFProcessor()
     
