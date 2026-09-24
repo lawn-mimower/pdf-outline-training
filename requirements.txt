@@ -1,0 +1,7 @@
+# Runtime for pdf_outline_extractor.py (installed by the Dockerfile)
+pymupdf>=1.24
+joblib
+# Needed only when loading a trained LightGBM model with --model
+numpy
+scikit-learn
+lightgbm

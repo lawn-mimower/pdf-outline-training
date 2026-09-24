@@ -1,0 +1,23 @@
+# Data, labels and PDFs (not shipped with the repo)
+*.pdf
+*.csv
+source_pdfs/
+labeled_data_complete/
+labeled_data_enriched/
+training_data_enriched.json
+input/
+output/
+
+# Trained models and prediction outputs
+*.joblib
+*.pkl
+*_model_info.json
+*_output.json
+output_outline.json
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
