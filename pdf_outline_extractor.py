@@ -28,6 +28,7 @@ Author: <you>
 from __future__ import annotations
 import argparse
 import json
+import numbers
 import os
 import statistics
 import re
@@ -227,7 +228,7 @@ class PDFOutlineExtractor:
             pred = self.model.predict(feats)
             # Mapping should be inside model pipeline; otherwise adjust here
             # assume labels are strings already or ints -> map
-            if isinstance(pred[0], (int, float)):
+            if isinstance(pred[0], numbers.Real):  # also matches numpy ints
                 label_map = {0: 'BODY', 1: 'TITLE', 2: 'H1', 3: 'H2', 4: 'H3', 5: 'H4'}
                 return [label_map.get(int(p), 'BODY') for p in pred]
             return [str(p) for p in pred]
