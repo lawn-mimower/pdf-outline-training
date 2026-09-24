@@ -104,9 +104,9 @@ class DocumentOutliner:
         # Second pass to build the outline
         for span in labeled_spans:
             label = span.get('predicted_label', '')
-            if label.startswith('H'):
+            if label in ("H1", "H2", "H3"):
                 output['outline'].append({
-                    "level": label[1:],  # <<< THE FIX IS HERE
+                    "level": label,
                     "text": span['text'],
                     "page": span['page']
                 })
@@ -137,9 +137,15 @@ class DocumentOutliner:
 
 # --- HOW TO USE THE FINAL SCRIPT ---
 if __name__ == "__main__":
-    MODEL_PATH = "lgbm_document_model_final.joblib"
-    NEW_PDF_PATH = "./AIH_model/AIH_predictor/test_sample.pdf"
-    OUTPUT_JSON_PATH = "output_outline.json"
+    import argparse
+    parser = argparse.ArgumentParser(description="Predict the title/H1-H3 outline of a PDF with a trained model.")
+    parser.add_argument("pdf", help="PDF to process")
+    parser.add_argument("--model", default="lgbm_document_model_final.joblib", help="Model saved by prediction.py")
+    parser.add_argument("--output", default="output_outline.json", help="Where to write the outline JSON")
+    args = parser.parse_args()
+    MODEL_PATH = args.model
+    NEW_PDF_PATH = args.pdf
+    OUTPUT_JSON_PATH = args.output
     
     if not os.path.exists(MODEL_PATH):
         print(f"FATAL ERROR: The model file '{MODEL_PATH}' was not found.")
