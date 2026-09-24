@@ -86,12 +86,14 @@ def preprocess_json_file(input_path, output_path):
                 # Vertical gap between the top of the current span and the bottom of the previous one.
                 distance_from_previous = current_span['bbox'][1] - previous_span['bbox'][3]
         
-        # --- Append the new features to the existing list ---
-        current_span["features"].extend([
+        # --- Append the new features to the 9 base features ---
+        # (labels saved by labeller.py already carry these 3 features, so
+        # drop any existing ones to keep 12 features, matching prediction)
+        current_span["features"] = current_span["features"][:9] + [
             relative_font_size,
             float(is_centered),
             distance_from_previous
-        ])
+        ]
         
     # --- Step 5: Clean up temporary and raw data, then save ---
     for span in spans_sorted:
