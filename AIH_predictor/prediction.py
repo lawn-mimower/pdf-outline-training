@@ -6,28 +6,29 @@ from sklearn.metrics import classification_report
 from imblearn.over_sampling import SMOTE
 from sklearn.impute import SimpleImputer
 import joblib
-import ast
+import argparse
 
 # --- STEP 1: LOAD AND PREPARE THE DATA ---
-# This assumes you have already run a script to generate this dataset.
-# The 'features' column should contain a string representation of a list of 12 features.
-DATA_PATH = './AIH_model/AIH_model/final_training_dataset.csv' 
-MODEL_SAVE_PATH = 'lgbm_document_model_final.joblib'
+# This expects the CSV written by AIH_preprocessor/stage3.ipynb:
+# columns feature_0 ... feature_11 (the 12 span features) and 'label'.
+parser = argparse.ArgumentParser(description="Train the final LightGBM heading classifier.")
+parser.add_argument("--data", default="final_training_dataset.csv", help="CSV from stage3.ipynb")
+parser.add_argument("--model-out", default="lgbm_document_model_final.joblib", help="Where to save the model")
+args = parser.parse_args()
+DATA_PATH = args.data
+MODEL_SAVE_PATH = args.model_out
 
 print(f"Loading data from '{DATA_PATH}'...")
 df = pd.read_csv(DATA_PATH)
 
-# Convert the string representation of feature lists back into actual lists
-# and then into separate columns for the model.
-df['features'] = df['features'].apply(ast.literal_eval)
+# The extractor produces exactly 12 features per span, so train on those.
+feature_columns = [f"feature_{i}" for i in range(12)]
+missing = [c for c in feature_columns if c not in df.columns]
+if missing:
+    raise ValueError(f"Missing feature columns {missing}. All rows must have exactly 12 features.")
 
-# Check for consistency: Ensure all feature lists have the same length (12)
-# This is critical for creating a valid DataFrame.
-if df['features'].apply(len).nunique() != 1 or df['features'].apply(len).iloc[0] != 12:
-    raise ValueError("Inconsistent number of features found. All rows must have exactly 12 features.")
-
-X = np.array(df['features'].tolist())
-y = df['label_encoded']
+X = df[feature_columns].to_numpy(dtype=float)
+y = df['label']
 
 print("Data loaded and features extracted successfully.")
 print(f"Feature matrix shape: {X.shape}")
