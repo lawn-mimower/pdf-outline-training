@@ -97,21 +97,36 @@ def amend_labeled_data(pdf_path, labeled_json_path, output_json_path):
 
 
 # --- HOW TO USE ---
+# Single pair:  python stage1.py Set1_feature.pdf Set1_target.json
+# All pairs:    python stage1.py --data-dir /path/to/AIH_data
+#   (pairs are matched by name: SetN_feature[_X].pdf <-> SetN_target[_X].json)
 if __name__ == "__main__":
-    # 1. Define the paths for ONE pdf and its corresponding json
-    PDF_PATH = "./AIH_model/AIH_preprocessor/source_pdfs/Set13_feature.pdf"
-    LABELED_JSON_PATH = "./AIH_model/AIH_data/Set13_target.json"
-    
-    # 2. Define where to save the output
-    OUTPUT_DIR = "labeled_data_complete"
+    import argparse
+    import glob
+
+    parser = argparse.ArgumentParser(description="Add bbox/page_width from each PDF to its hand-labelled spans.")
+    parser.add_argument("pdf_path", nargs="?", help="PDF file")
+    parser.add_argument("labeled_json_path", nargs="?", help="Labelled JSON for that PDF")
+    parser.add_argument("--data-dir", help="Directory with *_feature*.pdf / *_target*.json pairs")
+    parser.add_argument("--output-dir", default="labeled_data_complete")
+    args = parser.parse_args()
+
+    if args.data_dir:
+        pairs = []
+        for pdf in sorted(glob.glob(os.path.join(args.data_dir, "*_feature*.pdf"))):
+            name = os.path.basename(pdf).replace("_feature", "_target")[:-len(".pdf")] + ".json"
+            pairs.append((pdf, os.path.join(args.data_dir, name)))
+    elif args.pdf_path and args.labeled_json_path:
+        pairs = [(args.pdf_path, args.labeled_json_path)]
+    else:
+        parser.error("give PDF_PATH and LABELED_JSON_PATH, or --data-dir")
+
+    OUTPUT_DIR = args.output_dir
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-    
-    # Construct a descriptive output filename
-    output_filename = os.path.basename(LABELED_JSON_PATH).replace('.json', '_complete.json')
-    OUTPUT_JSON_PATH = os.path.join(OUTPUT_DIR, output_filename)
 
-    # 3. Run the function
-    amend_labeled_data(PDF_PATH, LABELED_JSON_PATH, OUTPUT_JSON_PATH)
-
-    # You would repeat this for all 9 of your PDF/JSON pairs.
+    for PDF_PATH, LABELED_JSON_PATH in pairs:
+        # Construct a descriptive output filename
+        output_filename = os.path.basename(LABELED_JSON_PATH).replace('.json', '_complete.json')
+        OUTPUT_JSON_PATH = os.path.join(OUTPUT_DIR, output_filename)
+        amend_labeled_data(PDF_PATH, LABELED_JSON_PATH, OUTPUT_JSON_PATH)
