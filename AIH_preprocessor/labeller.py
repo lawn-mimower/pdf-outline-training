@@ -184,8 +184,10 @@ class PDFLabeler:
                 is_centered,
                 distance_from_previous
             ])
-            
-            # Clean up raw data from the final JSON object to keep it clean
+
+        # Clean up raw data from the final JSON object to keep it clean
+        # (after the loop: the next span still needs the previous span's bbox)
+        for span in spans_sorted:
             del span['bbox']
             del span['page_width']
 
